@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>merbouti_souad_projet1</title>
+		<style>body {padding: 0;margin: 0;}canvas {background-color : none;display: block;margin: 0 auto;}
+		</style>
+	</head>
+	<body>
+		<canvas width = "640" height = "680" id = "canvas" style = "border:black 1px solid;">
+		</canvas>
+		<script type = "text/javascript" charset = "utf-8">
+			var canvas = document.getElementById("canvas");
+			var context = canvas.getContext("2d");
+
+			function draw() {
+				requestAnimationFrame(draw);
+			}
+            requestAnimationFrame(draw);
+			var isRight = false;var isLeft = false;var x = canvas.width / 2;var y = canvas.height - 30;var dX = 2;var dY = -2;var raqH = 12;var raqL = 60;var raqX = ( canvas.width - raqL ) / 2;var raqDX = 8;r= 15;
+var score = 0;
+function draw() {
+    context.clearRect( 0, 0, canvas.width, canvas.height );
+	context.beginPath();
+    let img = new Image();
+    img.src = 'bkgd.gif'
+    context.drawImage(img,0, 0, canvas.width, canvas.height);
+    //*****************************balle***************************************
+	context.arc( x, y, r, 0, Math.PI * 2 );
+	context.fillStyle = "black";
+	let b = new Image();
+    b.src = 'ball.png'
+	context.drawImage(b,x,y,r*2,r*2 );
+    //*************************raquette****************************************
+    let i = new Image();
+    i.src = 'raq.png'
+	context.drawImage(i,raqX, canvas.height - raqH, raqL, raqH );
+	Score();
+    //*************************les objets**************************************
+	objects();
+    ObjectDetect();
+    if( x + dX > canvas.width - r || x + dX < r ) {
+	dX = -dX;
+    
+}
+ //*************************mouvement de la raquette******************************
+if( y + dY < r ) {
+	dY = -dY;
+}
+if( isLeft && raqX > 0 ) { //gauche et est dans le canvas
+	raqX -= raqDX;
+} else if( isRight && ( raqX + raqL ) < canvas.width ) {//droite et est dans le canvas
+	raqX += raqDX;
+}
+if ( y + dY < r || ( y + dY > canvas.height - raqH - r && x + dX > raqX && x + dX < raqX + raqL )) {
+	dY = -dY;
+}
+if( y + dY > canvas.height ) {
+    alert("vous avez perdu ,Rejouer ?");
+    document.location.reload();
+    clearInterval(interval);   
+}
+    x += dX; 
+    y += dY;
+	requestAnimationFrame(draw); 
+}
+//********************Score***********************************************
+function Score() {
+	    context.font = "24px Calibri";
+        context.fillStyle = "white";
+        context.fillText("Score: "+score, (canvas.width / 2) -40, 20);
+    }
+//*************************gestion du clavier*********************************
+function keyDown(event) {
+	if( event.keyCode == 37 ) {
+		isLeft = true;
+	}
+	if( event.keyCode == 39 ) {
+		isRight = true;
+	}}
+function keyUp(event) {
+	if( event.keyCode == 37 ) {
+		isLeft = false;
+	}
+	if( event.keyCode == 39 ) {
+		isRight = false;
+	}}
+document.addEventListener('keydown', keyDown, false);
+document.addEventListener('keyup', keyUp, false);
+//*************************gestion des objets*********************************
+var imgWidth = 55;var imgHeight = 45;var d=20;
+
+var imgs = [];
+var cr=0;var c=7000;
+for( cr = 0; cr < c; cr++ ) {
+	imgs[cr] = { x: 0, y: 0 ,exist: 1 };  
+}
+function objects() {
+    let img = new Image();
+    img.src = 'et.png'
+    for( var cl = 0; cl < c; cl++ ) {
+        	if(imgs[cl].exist == 1) {
+	        	var imgX = -30000+70*cl+d;
+				var imgY = 100
+	            imgs[cl].x = imgX;
+	            imgs[cl].y = imgY;
+	            context.drawImage(img,imgX, imgY, imgWidth, imgHeight);	
+			}   
+}d++;
+}
+function ObjectDetect() {
+    for( var cl = 0; cl < c; cl++ ) {
+            var im = imgs[cl];
+            if(im.exist == 1) {
+	            if( x > im.x && x < im.x + imgWidth && y > im.y && y < im.y + imgHeight ) {
+	                dY = -dY;
+					score=score+10;
+	                im.exist = 0;
+	            }
+        }
+    }
+}
+		</script>
+	</body>
+</html>
